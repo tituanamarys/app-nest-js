@@ -1,9 +1,16 @@
-import { Controller, Param, Query, Get, Post, Body, Put, Delete } from '@nestjs/common';
-import {ProductsService} from 'src/services/products/products.service'
+import {
+    Controller, Param, Query, Get, Post,
+    Body, Put, Delete, HttpStatus,
+    HttpCode
+} from '@nestjs/common';
+import {ParseIntPipe} from 'src/common/parse-int.pipe'
+import { ProductsService } from 'src/services/products/products.service'
+import {CreateProductDto} from 'src/dtos/products.dtos'
+import {UpdateProductDto} from 'src/dtos/products.dtos'
 @Controller('products')
 export class ProductsController {
 
-    constructor (private productsService:ProductsService){
+    constructor(private productsService: ProductsService) {
 
     }
 
@@ -15,10 +22,10 @@ export class ProductsController {
     }
 
     /**RUTAS   DINAMICAS */
-    @Get('productId')//@Get('products/:productId')
-    getProduct(@Param(`productId`) productId: any) {
+    @Get(':productId')//@Get('products/:productId')
+    getProduct(@Param(`productId`,ParseIntPipe) productId: number) {
         // return `product ${productId}`;
-        return this.productsService.findOne(+productId);
+        return this.productsService.findOne(productId);
 
     }
 
@@ -39,10 +46,10 @@ export class ProductsController {
 
     }
 
-  
+
     //crear*******************
-@Post()
-    create (@Body() payload: any ){
+    @Post()
+    create(@Body() payload: CreateProductDto) {
         // return {
         //     message:'accion de crear',
         //     payload,
@@ -52,17 +59,16 @@ export class ProductsController {
 
     //************* update******************
     @Put(':id')
-    update(@Param('id')  id:number, @Body() payload: any){
+    update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
         // return {
         //     id,
         //     payload,
         // }
-        return this.productsService.update(+id,payload);
+        return this.productsService.update(id, payload);
     }
     /***DELETE */
     @Delete(':id')
-    delete(@Param('id') id:number)
-    {
+    delete(@Param('id') id: number) {
         // return id;
         return this.productsService.delete(+id);
     }
